@@ -64,17 +64,40 @@ internal fun Settings.withBuiltInDefaults(): Settings {
 
 ## 使用
 
+### 框架：推荐 Vector
+
+模块跑在 Xposed API 82 之上，推荐用 **[Vector](https://github.com/JingMatrix/Vector)**（`JingMatrix/Vector`）
+来加载它，而不是 LSPosed：
+
+| | Vector | LSPosed |
+| --- | --- | --- |
+| 维护状态 | 活跃，跟着 Android 新版走 | 长期未更新 |
+| 支持系统 | Android 8.1 – 17 Beta | 大致停在 Android 14 时代 |
+| 模块 API | 与原始 Xposed 保持 API 一致（本模块用的 API 82 可直接用） | 同一套 |
+| 运行环境 | Magisk / KernelSU + Zygisk | 同左 |
+
+Vector 是 Zygisk 模块（底层 LSPlant），不改 APK、重启即可撤销，装法和 LSPosed 基本一样。
+
+### 步骤
+
 1. 到 [Releases](https://github.com/elyezyc/RikkaHubNoSPON/releases) 下载最新一版的 APK 装上。
-2. 在 LSPosed（或其他支持 API 82 的 Xposed 框架）里启用本模块。
-3. 作用域勾选 RikkaHub（`me.rerere.rikkahub`）。清单里已经用 `xposedscope` 声明了默认作用域。
-4. 强制停止 RikkaHub，再重新打开。
+2. 装好 [Vector](https://github.com/JingMatrix/Vector)：
+   - 从 [Vector Releases](https://github.com/JingMatrix/Vector/releases) 下载最新的系统模块包；
+   - 用 Magisk / KernelSU 刷入，**确认 Zygisk 已启用**（必要时配 [NeoZygisk](https://github.com/JingMatrix/NeoZygisk)）；
+   - 重启设备。
+3. 从系统通知进入 Vector 管理界面 → 模块列表里启用 `RikkaHubNoSPON`。
+4. 作用域勾选 RikkaHub（`me.rerere.rikkahub`）。清单里已经用 `xposedscope` 声明了默认作用域，通常自动勾好。
+5. 强制停止 RikkaHub，再重新打开。
 
 确认生效：
 
 - RikkaHub → 设置 → 提供商：列表里只剩你自己添加的条目，自带的可以删。
-- LSPosed 日志里过滤 `RikkaHubNoSPON`，会看到 `提供商 N → M` 这样的记录；关键钩子没挂上会明确报错。
+- Vector 的日志页过滤 `RikkaHubNoSPON`，会看到 `提供商 N → M` 这样的记录；关键钩子没挂上会明确报错。
 
 模块本身不联网、不读写宿主数据、不开任何后台服务，只改内存里的这一个列表。
+
+> 想继续用 LSPosed 也可以——本模块只依赖 API 82 的 `XposedBridge.hookMethod/hookAllMethods` 与
+> `IXposedHookLoadPackage`，两套框架都提供。只是 LSPosed 对新系统支持有限，遇到注入问题时请先换 Vector 复现。
 
 ## 实现
 
@@ -106,7 +129,7 @@ internal fun Settings.withBuiltInDefaults(): Settings {
 
 ## 校验
 
-没有真机连接的条件下，用三层静态/离线校验代替「跑一遍」：
+不依赖真机的三层校验，`./verify.sh` 一条命令跑完：
 
 ```bash
 ./build.sh     # aapt2 + javac + d8 + zipalign + apksigner，产物在 dist/
@@ -126,21 +149,26 @@ internal fun Settings.withBuiltInDefaults(): Settings {
 - 产物 dex 里对 `XposedBridge.log/hookMethod/hookAllMethods`、`MethodHookParam.args/getResult/setResult`
   的引用描述符与官方 `api-82.jar` 逐条比对一致，排除了运行期 `NoSuchMethodError`。
 
-> **没有做真机运行验证。** 开发机 `adb devices` 为空，ART 上改 final 字段、LSPosed 注入时机这两点
-> 需要在装了 LSPosed 的设备上确认一次。如果日志里出现「写不回 providers 字段」，说明这条路径在你机器上
-> 被拦了，请把日志带回来。
+> **1.0.0 尚未在真机上做运行验证。**
+> 已经做到可离线验证的是：锚点对照官方发布包、过滤逻辑与反射层的 JVM 单测、产物结构检查。
+> 仍然需要在设备上确认的两个运行时行为是：ART 上改 `final` 字段是否放行、框架注入是否早于宿主初始化。
+> 如果日志里出现「写不回 providers 字段」，说明这条路径在你的设备上被拦了，请把日志带回来。
 
 ## 构建环境
 
 `build.sh` 不需要 Gradle，只要 JDK 17 + Android build-tools + 官方 `api-82.jar`：
 
 ```bash
-PROXY=http://192.168.25.1:10808 ./tools/fetch_toolchain.sh   # 首次：拉 JDK/build-tools/platform/Xposed API
+# 首次：拉 JDK / build-tools / platform / Xposed API
+# 需要走代理时设 PROXY（换成你自己的代理地址；直连就不要设）
+export PROXY=http://127.0.0.1:7890
+./tools/fetch_toolchain.sh
+
 ./build.sh
 ./verify.sh
 ```
 
-- 工具链脚本：[`tools/fetch_toolchain.sh`](tools/fetch_toolchain.sh)（`PROXY` 可留空直连）
+- 工具链脚本：[`tools/fetch_toolchain.sh`](tools/fetch_toolchain.sh)，支持 `PROXY` 环境变量；直连时不用设
 - 构建脚本：[`build.sh`](build.sh)；校验脚本：[`verify.sh`](verify.sh)
 - 签名信息从 `Key/keystore.properties` 读（`storePassword` / `keyAlias` / `keyPassword`），
   也可以用 `KS_PASS` / `KEY_ALIAS` / `KEY_PASS` 环境变量覆盖。
@@ -167,7 +195,6 @@ verify.sh          三层校验
 | `Key/` | 签名密钥库、口令文件、SSH 私钥；已在 `.gitignore` 排除 |
 | `rikkahub-3.3.0.apk` | 官方发布包，锚点校验用；本地缺失时 `verify_anchors.py` 会自动下载 |
 | `rikkahub/` | RikkaHub 源码克隆，供对照阅读（不是构建依赖），需要时 `git clone --depth 1 https://github.com/rikkahub/rikkahub.git` |
-| `DevelopmentLog/` | 开发日志，本地保留，不上传 |
 
 ## 范围之外
 

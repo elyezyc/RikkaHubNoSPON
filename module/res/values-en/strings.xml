@@ -14,13 +14,15 @@ Every time RikkaHub loads or saves its settings it re-adds any missing entry of 
 The builtIn flag is cleared to false, so the delete button in the provider settings shows up and actually sticks.
 
 How to use
-1. Enable this module in LSPosed (or any other Xposed framework).
-2. Tick RikkaHub in the module scope, package name me.rerere.rikkahub.
-3. Force-stop RikkaHub, then open it again.
+1. Load it with Vector (recommended, github.com/JingMatrix/Vector): needs Magisk or KernelSU with
+   Zygisk; flash the system module and reboot.
+2. Open the Vector manager from the system notification and enable RikkaHubNoSPON.
+3. Tick RikkaHub in the module scope, package name me.rerere.rikkahub.
+4. Force-stop RikkaHub, then open it again.
 
 How to verify
 - RikkaHub > Settings > Providers: only your own providers remain, built-in ones can be deleted.
-- Logs: open the LSPosed log page and filter for RikkaHubNoSPON; you will see lines like "providers N -> M".
+- Logs: open the Vector log page and filter for RikkaHubNoSPON; you will see lines like "providers N -> M".
 
 Notes
 - The filter keeps a provider when its id was present in the input of normalized(), so providers you add by hand or restore from a backup are kept.

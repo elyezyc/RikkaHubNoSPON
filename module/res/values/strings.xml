@@ -14,13 +14,15 @@ RikkaHub 每次读盘和每次写入设置都会跑一遍规整，把 DEFAULT_PR
 内置条目的 builtIn 标记被清成 false，设置页里的删除按钮因此可用；删掉之后也不会被重新写回。
 
 使用方法
-1. 在 LSPosed（或其他 Xposed 框架）里启用本模块。
-2. 作用域勾选 RikkaHub，包名 me.rerere.rikkahub。
-3. 强制停止 RikkaHub，再重新打开。
+1. 推荐用 Vector（github.com/JingMatrix/Vector）加载本模块：需要 Magisk 或 KernelSU + Zygisk，
+   刷入系统模块后重启。
+2. 从系统通知进入 Vector 管理界面，在模块列表里启用 RikkaHubNoSPON。
+3. 作用域勾选 RikkaHub，包名 me.rerere.rikkahub。
+4. 强制停止 RikkaHub，再重新打开。
 
 怎么确认生效
 - RikkaHub → 设置 → 提供商：列表里只剩你自己添加的那些，自带条目可以正常删除。
-- 日志：LSPosed 的日志页过滤 RikkaHubNoSPON，能看到「提供商 N → M」这样的记录。
+- 日志：Vector 的日志页过滤 RikkaHubNoSPON，能看到「提供商 N → M」这样的记录。
 
 说明
 - 过滤器判断的是「normalized 的入参里有没有这个 id」，所以你在设置页里手动添加、或者备份恢复带进来的提供商会正常保留。
