@@ -62,6 +62,8 @@ def main():
         ROOT, "dist", "RikkaHubNoSPON-1.0.0.apk")
     if not os.path.isfile(apk):
         raise SystemExit("找不到 APK: %s" % apk)
+    if not os.path.isfile(DEXDUMP):
+        raise SystemExit("找不到 dexdump：%s\n%s" % (DEXDUMP, "先跑 ./tools/fetch_toolchain.sh（可用 PROXY=http://ip:port 走代理）拉取构建工具链"))
 
     failures = []
 

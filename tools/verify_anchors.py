@@ -90,6 +90,9 @@ for sub in PROVIDER_SUBCLASSES:
 
 
 def main():
+    if not os.path.isfile(DEXDUMP):
+        raise SystemExit("找不到 dexdump：%s\n%s" % (DEXDUMP, "先跑 ./tools/fetch_toolchain.sh（可用 PROXY=http://ip:port 走代理）拉取构建工具链"))
+
     if not os.path.isfile(APK):
         if APK != DEFAULT_APK:
             raise SystemExit("找不到 APK: %s" % APK)

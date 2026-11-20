@@ -16,7 +16,11 @@ bash "$ROOT/tests/run.sh"
 
 echo
 echo "############ 3/3 产物 APK ############"
-python3 "$ROOT/tools/verify_apk.py" "$APK"
+if [ -f "$APK" ]; then
+    python3 "$ROOT/tools/verify_apk.py" "$APK"
+else
+    echo "跳过：没有 $APK（先 ./build.sh 构建，或从 Releases 下载后放到 dist/）"
+fi
 
 echo
 echo "全部校验通过。"
