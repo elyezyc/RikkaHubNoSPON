@@ -65,7 +65,7 @@ internal fun Settings.withBuiltInDefaults(): Settings {
 生效后，RikkaHub 设置里的提供商列表只剩自己添加的条目，自带条目可以正常删除。
 Vector 日志页过滤 `RikkaHubNoSPON` 能看到 `提供商 N → M` 记录，锚点没挂上会输出错误。
 
-LSPosed 也可以。模块只用到 API 82 的 `XposedBridge.hookMethod`、`hookAllMethods` 和 `IXposedHookLoadPackage`。
+兼容性说明： 本模块使用的 Xposed API 限于 API 82 提供的 XposedBridge.hookMethod、XposedBridge.hookAllMethods 和 IXposedHookLoadPackage，因此也可以在兼容这些 API 的 LSPosed 环境中运行。项目主要推荐使用 Vector。
 
 ## 实现
 
