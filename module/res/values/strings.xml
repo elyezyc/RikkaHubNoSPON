@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- RikkaHubNoSPON / SPDX-License-Identifier: GPL-3.0-or-later -->
+<resources>
+    <string name="app_name">RikkaHubNoSPON</string>
+    <string name="xposed_description">阻止 RikkaHub 自动写入内置提供商，并允许删除自带提供商</string>
+
+    <string name="main_body">版本 %1$s
+
+作用
+1. 不再自动写入内置提供商
+RikkaHub 每次读盘和每次写入设置都会跑一遍规整，把 DEFAULT_PROVIDERS 里缺掉的条目补回提供商列表——也就是你删掉的自带提供商会自己长回来。模块在规整之后把它们全部丢弃：只有你自己保存过的条目会留下。
+
+2. 允许删除自带提供商
+内置条目的 builtIn 标记被清成 false，设置页里的删除按钮因此可用；删掉之后也不会被重新写回。
+
+使用方法
+1. 在 LSPosed（或其他 Xposed 框架）里启用本模块。
+2. 作用域勾选 RikkaHub，包名 me.rerere.rikkahub。
+3. 强制停止 RikkaHub，再重新打开。
+
+怎么确认生效
+- RikkaHub → 设置 → 提供商：列表里只剩你自己添加的那些，自带条目可以正常删除。
+- 日志：LSPosed 的日志页过滤 RikkaHubNoSPON，能看到「提供商 N → M」这样的记录。
+
+说明
+- 过滤器判断的是「normalized 的入参里有没有这个 id」，所以你在设置页里手动添加、或者备份恢复带进来的提供商会正常保留。
+- 模块按类名/方法名挂钩，反编译核对过 RikkaHub 3.3.0；宿主大改版后可能失效，失效时只在日志里报错，不影响宿主本身。
+- 语音（TTS）、语音识别、媒体生成这几类提供商不在本模块的处理范围内。
+- 本项目以 GPL-3.0-or-later 发布。
+</string>
+
+    <string-array name="xposed_scope">
+        <item>me.rerere.rikkahub</item>
+    </string-array>
+</resources>

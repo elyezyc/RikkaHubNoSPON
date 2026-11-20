@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- RikkaHubNoSPON / SPDX-License-Identifier: GPL-3.0-or-later -->
+<resources>
+    <string name="app_name">RikkaHubNoSPON</string>
+    <string name="xposed_description">Stop RikkaHub from auto-writing built-in providers, and allow deleting them</string>
+
+    <string name="main_body">Version %1$s
+
+What it does
+1. No more auto-written built-in providers
+Every time RikkaHub loads or saves its settings it re-adds any missing entry of DEFAULT_PROVIDERS, so a provider you deleted comes back. The module drops those re-added entries: only providers you saved yourself survive.
+
+2. Built-in providers become deletable
+The builtIn flag is cleared to false, so the delete button in the provider settings shows up and actually sticks.
+
+How to use
+1. Enable this module in LSPosed (or any other Xposed framework).
+2. Tick RikkaHub in the module scope, package name me.rerere.rikkahub.
+3. Force-stop RikkaHub, then open it again.
+
+How to verify
+- RikkaHub > Settings > Providers: only your own providers remain, built-in ones can be deleted.
+- Logs: open the LSPosed log page and filter for RikkaHubNoSPON; you will see lines like "providers N -> M".
+
+Notes
+- The filter keeps a provider when its id was present in the input of normalized(), so providers you add by hand or restore from a backup are kept.
+- Hooks are installed by class/method name and were verified against RikkaHub 3.3.0. A major host rewrite may break them; failures are only logged and never harm the host app.
+- TTS, ASR and media-generation providers are out of scope.
+- Licensed under GPL-3.0-or-later.
+</string>
+
+    <string-array name="xposed_scope">
+        <item>me.rerere.rikkahub</item>
+    </string-array>
+</resources>
