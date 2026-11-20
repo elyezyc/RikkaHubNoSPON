@@ -11,7 +11,8 @@ MIN_SDK="${MIN_SDK:-26}"
 TARGET_SDK="${TARGET_SDK:-36}"
 
 # ---- 工具位置（都可用环境变量覆盖） ----
-JDK_HOME="${JDK_HOME:-$(ls -d "$ROOT"/tools/jdk-* 2>/dev/null | head -1)}"
+# 工具链没下载时 ls 会失败，加 || true 免得 set -e 直接静默退出
+JDK_HOME="${JDK_HOME:-$(ls -d "$ROOT"/tools/jdk-* 2>/dev/null | head -1 || true)}"
 SDK_ROOT="${SDK_ROOT:-$ROOT/tools/android-sdk}"
 BT="${BUILD_TOOLS:-$SDK_ROOT/build-tools/36.0.0}"
 ANDROID_JAR="${ANDROID_JAR:-$SDK_ROOT/platforms/android-36/android.jar}"
@@ -30,9 +31,10 @@ ASSETS_DIR="$ROOT/module/assets"
 die() { echo "错误: $*" >&2; exit 1; }
 
 missing=()
-for tool in "$JDK_HOME/bin/javac" "$BT/aapt2" "$BT/d8" "$BT/zipalign" "$BT/apksigner" "$ANDROID_JAR" "$XPOSED_JAR"; do
-    [ -e "$tool" ] || missing+=("$tool")
-done
+[ -x "$JDK_HOME/bin/javac" ] || missing+=("JDK 17（tools/jdk-*）")
+[ -e "$BT/aapt2" ] || missing+=("Android build-tools 36（tools/android-sdk/build-tools/36.0.0）")
+[ -e "$ANDROID_JAR" ] || missing+=("Android platform 36（tools/android-sdk/platforms/android-36/android.jar）")
+[ -e "$XPOSED_JAR" ] || missing+=("Xposed API 82（tools/xposed-api-82.jar）")
 if [ ${#missing[@]} -gt 0 ]; then
     printf '缺少构建依赖:\n' >&2
     printf '  %s\n' "${missing[@]}" >&2

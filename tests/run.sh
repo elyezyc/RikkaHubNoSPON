@@ -4,11 +4,16 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-JDK_HOME="${JDK_HOME:-$(ls -d "$ROOT"/tools/jdk-* 2>/dev/null | head -1)}"
+# 工具链没下载时 ls 会失败，加 || true 免得 set -e 直接静默退出
+JDK_HOME="${JDK_HOME:-$(ls -d "$ROOT"/tools/jdk-* 2>/dev/null | head -1 || true)}"
 XPOSED_JAR="${XPOSED_JAR:-$ROOT/tools/xposed-api-82.jar}"
 OUT="$ROOT/.work/test"
 
-[ -x "$JDK_HOME/bin/javac" ] || { echo "找不到 JDK：$JDK_HOME" >&2; exit 1; }
+[ -x "$JDK_HOME/bin/javac" ] || {
+    echo "找不到 JDK 17（$JDK_HOME）" >&2
+    echo "先跑 ./tools/fetch_toolchain.sh" >&2
+    exit 1
+}
 [ -f "$XPOSED_JAR" ] || {
     echo "找不到 Xposed API：$XPOSED_JAR" >&2
     echo "先跑 ./tools/fetch_toolchain.sh" >&2
