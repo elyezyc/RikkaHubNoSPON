@@ -110,8 +110,6 @@ LSPosed 也可以。模块只用到 API 82 的 `XposedBridge.hookMethod`、`hook
 - JVM 单测：过滤规则 12 项断言，反射层 17 项断言，宿主替身在 `test/me` 下；
 - 检查产物 APK 的入口、清单和 dex 内容。
 
-尚未在真机上运行过。需要在设备上确认的是 ART 改 `final` 字段是否放行、框架注入是否早于宿主初始化。
-
 ## 目录
 
 ```
