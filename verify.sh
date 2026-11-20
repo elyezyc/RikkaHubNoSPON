@@ -12,7 +12,7 @@ python3 "$ROOT/tools/verify_anchors.py" "$HOST_APK"
 
 echo
 echo "############ 2/3 JVM 单元测试 ############"
-bash "$ROOT/tests/run.sh"
+bash "$ROOT/test/run.sh"
 
 echo
 echo "############ 3/3 产物 APK ############"

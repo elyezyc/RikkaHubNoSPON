@@ -2,7 +2,7 @@
  * ProviderPolicy 的单元测试：不依赖 JUnit、不依赖 Android，直接用 JDK 跑。
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
- * 用 tests/run.sh 跑。
+ * 用 test/run.sh 跑。
  */
 package com.elyezyc.rikkahubnospon;
 

@@ -31,7 +31,7 @@ SOURCES=(
 )
 while IFS= read -r file; do
     SOURCES+=("$file")
-done < <(find "$ROOT/tests/src" -name '*.java' | sort)
+done < <(find "$ROOT/test" -name '*.java' | sort)
 
 "$JDK_HOME/bin/javac" -d "$OUT" -cp "$XPOSED_JAR" "${SOURCES[@]}"
 
