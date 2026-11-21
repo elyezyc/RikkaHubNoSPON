@@ -52,7 +52,7 @@ internal fun Settings.withBuiltInDefaults(): Settings {
 
 ## 使用
 
-推荐用 [Vector](https://github.com/JingMatrix/Vector) 加载。它是 Zygisk 模块，支持 Android 8.1 到 17 Beta，
+推荐用 [Vector](https://github.com/JingMatrix/Vector) 加载。支持 Android 8.1 到 17 Beta，使用GPLv3许可证开源，
 模块 API 与原始 Xposed 保持一致。
 
 1. 在 [Releases](https://github.com/elyezyc/RikkaHubNoSPON/releases) 下载 APK 并安装。
@@ -65,7 +65,7 @@ internal fun Settings.withBuiltInDefaults(): Settings {
 生效后，RikkaHub 设置里的提供商列表只剩自己添加的条目，自带条目可以正常删除。
 Vector 日志页过滤 `RikkaHubNoSPON` 能看到 `提供商 N → M` 记录，锚点没挂上会输出错误。
 
-兼容性说明： 本模块使用的 Xposed API 限于 API 82 提供的 XposedBridge.hookMethod、XposedBridge.hookAllMethods 和 IXposedHookLoadPackage，因此也可以在兼容这些 API 的 LSPosed 环境中运行。项目主要推荐使用 Vector。
+兼容性说明： 本模块使用的 Xposed API 限于 API 82 提供的 XposedBridge.hookMethod、XposedBridge.hookAllMethods 和 IXposedHookLoadPackage，因此也可以在兼容这些 API 的 LSPosed 环境中运行。项目主要推荐使用开源的 Vector。
 
 ## 实现
 
